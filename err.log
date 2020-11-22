@@ -1,0 +1,27 @@
+Command error occured with command 'create'. Error details: Command raised an exception: AttributeError: 'Bot' object has no attribute 'id'.
+Command error occured with command 'create'. Error details: Command raised an exception: AttributeError: 'Bot' object has no attribute 'id'.
+Unknown Command. Error details: Command "launch" is not found.
+Command error occured with command 'round'. Error details: Command raised an exception: AttributeError: 'Guild' object has no attribute 'member'.
+Command error occured with command 'round'. Error details: Command raised an exception: AttributeError: 'ClientUser' object has no attribute 'create_dm'.
+Command error occured with command 'round'. Error details: Command raised an exception: AttributeError: 'str' object has no attribute 'get_png_filename'.
+Command error occured with command 'list'. Error details: Command raised an exception: IndexError: list index out of range.
+Command error occured with command 'list'. Error details: Command raised an exception: IndexError: list index out of range.
+Command error occured with command 'load'. Error details: Command raised an exception: ExtensionFailed: Extension 'music' raised an error: NameError: name 'Client' is not defined.
+Command error occured with command 'disconnect'. Error details: The global check functions for command disconnect failed..
+Command error occured with command 'load'. Error details: Command raised an exception: ExtensionFailed: Extension 'admin' raised an error: CommandRegistrationError: The command disconnect is already an existing command or alias..
+Command error occured with command 'load'. Error details: Command raised an exception: ExtensionFailed: Extension 'music' raised an error: TypeError: cog_after_invoke() missing 2 required positional arguments: 'self' and 'ctx'.
+Command error occured with command 'load'. Error details: Command raised an exception: ExtensionFailed: Extension 'music' raised an error: TypeError: cog_after_invoke() missing 1 required positional argument: 'ctx'.
+Command error occured with command 'load'. Error details: Command raised an exception: ExtensionFailed: Extension 'music' raised an error: SyntaxError: can't assign to await expression (music.py, line 75).
+Command error occured with command 'play'. Error details: Command raised an exception: AttributeError: 'str' object has no attribute 'urlopen'.
+Command error occured with command 'play'. Error details: Command raised an exception: AttributeError: 'NoneType' object has no attribute 'is_playing'.
+Unknown Command. Error details: Command "start" is not found.
+Command error occured with command 'play'. Error details: Command raised an exception: NameError: name 'yt' is not defined.
+Command error occured with command 'play'. Error details: Command raised an exception: NameError: name 'yt' is not defined.
+Command error occured with command 'play'. Error details: Command raised an exception: NameError: name 'YDL_OPT' is not defined.
+Command error occured with command 'play'. Error details: Command raised an exception: TypeError: set_author() got an unexpected keyword argument 'author'.
+Command error occured with command 'play'. Error details: Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
+In embed.description: Must be 2048 or fewer in length..
+Command error occured with command 'play'. Error details: Command raised an exception: AttributeError: 'NoneType' object has no attribute 'is_playing'.
+Command error occured with command 'play'. Error details: Command raised an exception: DownloadError: ERROR: requested format not available.
+Command error occured with command 'play'. Error details: Command raised an exception: DownloadError: ERROR: gxIS6ITCo9k: YouTube said: Unable to extract video data.
+Unknown Command. Error details: Command "leacve" is not found.

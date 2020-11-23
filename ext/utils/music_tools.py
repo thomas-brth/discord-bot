@@ -73,14 +73,18 @@ class Song():
 		hh = time_in_min//60
 		mm = time_in_min%60
 		ss = time_in_s%60
-		return f"{hh}:{mm}:{ss}"
+		return f"{hh}h{mm}m{ss}s"
+
+	@property
+	def duration_in_s(self):
+		return int(self._info['duration'])
 
 	@property
 	def thumbnail(self):
 		return self._info['thumbnail']
 
 	def __str__(self):
-		return self.title
+		return f"{self.title} - [{self.duration}] - Demandé par {self.ctx.author.name} "
 		
 
 ###############

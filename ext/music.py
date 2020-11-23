@@ -22,7 +22,7 @@ from utils import music_tools
 ###############
 
 TEST_MODE = True
-GUILD = os.getenv("TEST_GUILD") if TEST_MODE else os.getenv("CARQUEF_GUILD")
+GUILD = os.getenv("TEST_GUILD") if TEST_MODE else os.getenv("GUILD")
 PERSONAL_ID = os.getenv("PERSONAL_ID")
 FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
@@ -40,11 +40,14 @@ class Music(commands.Cog):
 		self.client = client
 		self.guild = None
 		self.personnal_id = int(PERSONAL_ID)
+		self.client.owner_id = self.personnal_id
 		
 		self.voice_channel = None
 		self.voice_client = None
 
 		self.playlist = []
+		self.current_song = None
+		self.last_song_embed = None
 
 	############
 	## Events ##
@@ -58,6 +61,7 @@ class Music(commands.Cog):
 		name="start",
 		help="Active le mode audio."
 		)
+	@commands.is_owner()
 	async def start(self, ctx):
 		"""
 		Start audio mode and make the bot join a given voice channel.
@@ -74,6 +78,7 @@ class Music(commands.Cog):
 		name="leave",
 		help="Quitte le mode audio."
 		)
+	@commands.is_owner()
 	async def leave(self, ctx):
 		"""
 		Leave audio channel
@@ -86,12 +91,17 @@ class Music(commands.Cog):
 			await ctx.send(f"Déconnecté du canal {self.voice_channel}", delete_after=10)
 			self.voice_channel = None
 			self.voice_client = None
+			self.playlist = []
+			if self.last_song_embed is not None:
+				await self.last_song_embed.delete()
+			self.last_song_embed = None
 
 	@commands.command(
 		name="move_to",
 		help="Change le bot de salon vocal",
 		aliases=["move"]
 		)
+	@commands.is_owner()
 	async def move_to(self, ctx, channel : str):
 		"""
 		Move bot to a different voice channel.
@@ -99,12 +109,15 @@ class Music(commands.Cog):
 		await ctx.message.delete()
 		new_voice_channel = discord.utils.get(self.guild.voice_channels, channel)
 		if new_voice_channel is None:
-			await ctx.send("Impossible de trouver le channel demandé.", delete_after=10)
+			await ctx.send("Impossible de trouver le salon demandé.", delete_after=10)
 		else:
 			if self.voice_client.is_playing():
-				self.voice_client.stop()
+				self.voice_client.pause()
 			self.voice_channel = new_voice_channel
 			self.voice_client.move_to(self.voice_channel)
+			if self.voice_client.is_paused():
+				self.voice_client.resume()
+
 
 	@commands.command(
 		name="play",
@@ -126,13 +139,18 @@ class Music(commands.Cog):
 		if self.voice_client.is_playing():
 			self.playlist.append(song)
 		else:
+			# Delete previous embed
+			if self.last_song_embed is not None:
+				await self.last_song_embed.delete()
 			# Create and send an Embed
 			embed = discord.Embed(title=song.title, url=song.yt_url, color=0xf70006)
 			embed.set_author(name=song.uploader, url=song.uploader_url)
 			embed.set_thumbnail(url=song.thumbnail)
 			embed.add_field(name="Vues", value=song.views, inline=True)
 			embed.add_field(name="Durée", value=song.duration, inline=True)
-			await song.ctx.send(embed=embed, delete_after=30)
+			self.last_song_embed = await song.ctx.send(embed=embed)
+
+			self.current_song = song
 			
 			# Play music
 			after_func = lambda ctx : self.play_next(ctx)
@@ -166,6 +184,7 @@ class Music(commands.Cog):
 		name="stop",
 		help="Coupe la musique."
 		)
+	@commands.is_owner()
 	async def stop(self, ctx):
 		"""
 		Stop the player if the music is currently playing.
@@ -173,6 +192,10 @@ class Music(commands.Cog):
 		await ctx.message.delete()
 		if self.voice_client is not None and self.voice_client.is_playing():
 			self.playlist = []
+			self.current_song = None
+			if self.last_song_embed is not None:
+				await self.last_song_embed.delete()
+			self.last_song_embed = None
 			self.voice_client.stop()
 		else:
 			await ctx.send("Il n'y a pas de musique actuellement en cours d'écoute.", delete_after=10)
@@ -215,9 +238,16 @@ class Music(commands.Cog):
 		"""
 		await ctx.message.delete()
 		if self.playlist:
+			total_time = 0
 			await ctx.send("Musiques à venir:", delete_after=10)
 			for song in self.playlist:
 				await ctx.send(f"{song}", delete_after=10)
+				total_time += song.duration_in_s
+			total_time_in_min = total_time//60
+			hh = total_time_in_min//60
+			mm = total_time_in_min%60
+			ss = total_time%60
+			await ctx.send(f"Durée de la playlist: {hh}h{mm}m{ss}s", delete_after=10)
 		else:
 			await ctx.send("Aucune musique dans la playlist.", delete_after=10)
 		

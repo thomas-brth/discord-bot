@@ -19,7 +19,7 @@ import asyncio
 ###############
 
 TEST_MODE = True
-GUILD = os.getenv("TEST_GUILD") if TEST_MODE else os.getenv("CARQUEF_GUILD")
+GUILD = os.getenv("TEST_GUILD") if TEST_MODE else os.getenv("GUILD")
 PERSONAL_ID = os.getenv("PERSONAL_ID")
 
 #############
@@ -88,9 +88,12 @@ class Admin(commands.Cog):
 	@commands.is_owner()
 	async def disconnect(self, ctx):
 		await ctx.message.delete()
-		await ctx.send("À la prochaine!", delete_after=5)
-		await asyncio.sleep(6)
-		await self.client.close()
+		if self.client.voice_clients:
+			await ctx.send("Impossible de me déconnecter. Je dois d'abord quitter les salons vocaux.", delete_after=10)
+		else:
+			await ctx.send("À la prochaine!", delete_after=5)
+			await asyncio.sleep(6)
+			await self.client.close()
 
 	@commands.command(
 		name="purge",

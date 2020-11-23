@@ -6,6 +6,3 @@ __pycache__/
 # Environments
 .env
 env/
-
-# Logs
-err.log

@@ -15,13 +15,14 @@ load_dotenv()
 import os
 import sys
 sys.path.append("ext")
+sys.path.append("ext\\utils")
 
 ###############
 ## Constants ##
 ###############
 
 TEST_MODE = True
-TOKEN = os.getenv("TEST_BOT") if TEST_MODE else os.getenv("CARQUEF_BOT")
+TOKEN = os.getenv("TEST_BOT") if TEST_MODE else os.getenv("BOT")
 
 ###############
 ## Functions ##

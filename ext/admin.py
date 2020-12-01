@@ -28,13 +28,19 @@ PERSONAL_ID = os.getenv("PERSONAL_ID")
 
 class Admin(commands.Cog):
 	"""
-	Cog with admin commands.
+	Extension with admin commands.
 	"""
-	def __init__(self, client):
+	def __init__(self, client : commands.Bot):
 		self.client = client
 		self.guild = None
 		self.personnal_id = int(PERSONAL_ID)
 		self.client.owner_id = self.personnal_id
+
+	async def cog_check(self, ctx):
+		"""
+		Check to be executed before any command.
+		"""
+		return True
 
 	############
 	## Events ##
@@ -43,20 +49,19 @@ class Admin(commands.Cog):
 	@commands.Cog.listener()
 	async def on_ready(self):
 		self.guild = discord.utils.get(self.client.guilds, id=int(GUILD))
-		channel = discord.utils.get(self.guild.channels, name="discussion-posée")
-		await channel.send("Salut tout le monde!", delete_after=10)
-		self.client.get_command('help').cog = self
+		channel = self.guild.system_channel
+		if channel is not None:
+			await channel.send("Salut tout le monde!", delete_after=10)
+		self.client.get_command('help').cog = self # Set 'help' command as an Admin command
 
-	"""
+	
 	@commands.Cog.listener()
 	async def on_command_error(self, ctx, error):
-		with open("err.log", 'a') as foo:
-	 		if ctx.command is not None:
-	 			foo.write(f"Command error occured with command '{ctx.command.name}'. Error details: {error}.\n")
-	 		else:
-	 			foo.write(f"Unknown Command. Error details: {error}.\n")
-	 		foo.close()
-
+		"""
+		Triggered when an exception is raised.
+		"""
+		if ctx is not None and ctx.message is not None:
+			await ctx.message.delete()
 		ignored = (commands.CommandNotFound, commands.UserInputError)
 		error = getattr(error, 'original', error)
 		
@@ -68,11 +73,13 @@ class Admin(commands.Cog):
 			await ctx.send(f"La commande {ctx.command.name} a été désactivée.", delete_after=10)
 		elif isinstance(error, commands.CheckFailure):
 			await ctx.send("Tu n'as pas la permission d'effectuer cette commande.", delete_after=10)
+		elif isinstance(error, commands.CommandOnCooldown):
+			await ctx.send("Cette commande est en cooldown, attends un peu.", delete_after=10)
 		else:
 			pass
 
-		return # Exit
-		"""
+		raise error
+		
 	
 
 	##############
@@ -100,10 +107,13 @@ class Admin(commands.Cog):
 		help="Supprime les messages."
 		)
 	@commands.is_owner()
-	async def purge(self, ctx):
+	async def purge(self, ctx, n : int = 10):
+		"""
+		Purge message up to 'time' s ago.
+		"""
 		await ctx.message.delete()
 		try:
-			await ctx.channel.purge(limit=100)
+			await ctx.channel.purge(limit=n)
 		except Exception as e:
 			raise e
 

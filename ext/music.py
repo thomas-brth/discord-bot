@@ -21,8 +21,6 @@ from utils import music_tools
 ## Constants ##
 ###############
 
-TEST_MODE = True
-GUILD = os.getenv("TEST_GUILD") if TEST_MODE else os.getenv("GUILD")
 PERSONAL_ID = os.getenv("PERSONAL_ID")
 FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
@@ -36,9 +34,8 @@ class Music(commands.Cog):
 
 	Play music in a vocal channel.
 	"""
-	def __init__(self, client):
+	def __init__(self, client : commands.Bot):
 		self.client = client
-		self.guild = None
 		self.personnal_id = int(PERSONAL_ID)
 		self.client.owner_id = self.personnal_id
 		
@@ -48,6 +45,12 @@ class Music(commands.Cog):
 		self.playlist = []
 		self.current_song = None
 		self.last_song_embed = None
+
+	async def cog_check(self, ctx):
+		"""
+		Check to be executed before any command.
+		"""
+		return True
 
 	############
 	## Events ##
@@ -123,6 +126,7 @@ class Music(commands.Cog):
 		name="play",
 		help="Cherche une musique sur Youtube et la joue."
 		)
+	@commands.cooldown(rate=5, per=30.0)
 	async def play(self, ctx, *, query):
 		"""
 		Play next musique in the playlist.
@@ -154,7 +158,9 @@ class Music(commands.Cog):
 			
 			# Play music
 			after_func = lambda ctx : self.play_next(ctx)
-			self.voice_client.play(discord.FFmpegPCMAudio(song.url, **FFMPEG_OPTIONS), after=after_func)
+			source = discord.FFmpegPCMAudio(song.url, **FFMPEG_OPTIONS)
+			source = discord.PCMVolumeTransformer(source, volume=1.0) # Transform source to enable volume control
+			self.voice_client.play(source, after=after_func)
 
 	def play_next(self, ctx):
 		"""
@@ -170,6 +176,7 @@ class Music(commands.Cog):
 		name="next",
 		help="Joue la prochaine musique."
 		)
+	@commands.cooldown(rate=1, per=15.0)
 	async def next(self, ctx):
 		"""
 		Jump to the next music in the playlist.
@@ -204,6 +211,7 @@ class Music(commands.Cog):
 		name="pause",
 		help="Met la musique en pause."
 		)
+	@commands.cooldown(rate=2, per=30.0)
 	async def pause(self, ctx):
 		"""
 		Pause the player if the music is currently playing.
@@ -218,6 +226,7 @@ class Music(commands.Cog):
 		name="resume",
 		help="Remet la musique."
 		)
+	@commands.cooldown(rate=2, per=30.0)
 	async def resume(self, ctx):
 		"""
 		Resume the player if the music is currently paused.
@@ -232,6 +241,7 @@ class Music(commands.Cog):
 		name="playlist",
 		help="Affiche la playlist actuelle."
 		)
+	@commands.cooldown(rate=5, per=30.0)
 	async def display_playlist(self, ctx):
 		"""
 		Display current playslist.
@@ -250,6 +260,25 @@ class Music(commands.Cog):
 			await ctx.send(f"Durée de la playlist: {hh}h{mm}m{ss}s", delete_after=10)
 		else:
 			await ctx.send("Aucune musique dans la playlist.", delete_after=10)
+
+	@commands.command(
+		name="volume",
+		help="Change le volume du bot (entre 0 et 100)."
+		)
+	@commands.cooldown(rate=1, per=10.0)
+	async def volume(self, ctx, volume : int):
+		"""
+		Change volume of a bot while playing.
+		"""
+		await ctx.message.delete()
+		if self.voice_client is not None and self.voice_client.is_playing():
+			if volume > 100 or volume < 0:
+				await ctx.send("Tu dois spécifier un niveau de volume entre 0 et 100.", delete_after=10)
+			else:
+				self.voice_client.source.volume = volume/100
+				await ctx.send(f"Volume fixé à {self.voice_client.source.volume*100}%.", delete_after=10)
+		else:
+			await ctx.send("Il n'y a pas de musique actuellement en cours d'écoute.", delete_after=10)
 		
 
 ###############

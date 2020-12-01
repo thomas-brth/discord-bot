@@ -57,6 +57,9 @@ def main():
 	
 	bot = commands.Bot(command_prefix=['!', '.'], description=desc)
 
+	## TO DO ##
+	## Desactivate help command and rewrite it in the admin cog.
+
 	# Load main extensions
 	for extension in extensions:
 		load(bot, extension)

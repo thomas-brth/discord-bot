@@ -16,6 +16,7 @@ import os
 import sys
 sys.path.append("ext")
 sys.path.append("ext\\utils")
+sys.path.append("ext\\images")
 
 ###############
 ## Constants ##

@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 import os
 import asyncio
+import time
 
 ###############
 ## Constants ##
@@ -53,15 +54,16 @@ class Admin(commands.Cog):
 		if channel is not None:
 			await channel.send("Salut tout le monde!", delete_after=10)
 		self.client.get_command('help').cog = self # Set 'help' command as an Admin command
-
 	
 	@commands.Cog.listener()
 	async def on_command_error(self, ctx, error):
 		"""
 		Triggered when an exception is raised.
 		"""
-		if ctx is not None and ctx.message is not None:
-			await ctx.message.delete()
+		
+		#if ctx is not None and ctx.message is not None:
+		#	await ctx.message.delete()
+		
 		ignored = (commands.CommandNotFound, commands.UserInputError)
 		error = getattr(error, 'original', error)
 		
@@ -76,16 +78,13 @@ class Admin(commands.Cog):
 		elif isinstance(error, commands.CommandOnCooldown):
 			await ctx.send("Cette commande est en cooldown, attends un peu.", delete_after=10)
 		else:
-			pass
+			await ctx.send("Une erreur est survenue.", delete_after=10)
 
 		raise error
 		
-	
-
 	##############
 	## Commands ##
 	##############
-
 
 	@commands.command(
 		name="disconnect",

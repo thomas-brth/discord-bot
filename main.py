@@ -16,7 +16,7 @@ import os
 import sys
 sys.path.append("ext")
 sys.path.append("ext\\utils")
-sys.path.append("ext\\images")
+sys.path.append("ext\\resources")
 
 ###############
 ## Constants ##
@@ -57,9 +57,6 @@ def main():
 	extensions = ["ext.admin"]
 	
 	bot = commands.Bot(command_prefix=['!', '.'], description=desc)
-
-	## TO DO ##
-	## Desactivate help command and rewrite it in the admin cog.
 
 	# Load main extensions
 	for extension in extensions:

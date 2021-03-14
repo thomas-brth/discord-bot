@@ -20,7 +20,7 @@ import time
 ###############
 
 TEST_MODE = True
-GUILD = os.getenv("TEST_GUILD") if TEST_MODE else os.getenv("GUILD")
+GUILD = os.getenv("TEST_GUILD") if TEST_MODE else os.getenv("GAMES_GUILD")
 PERSONAL_ID = os.getenv("PERSONAL_ID")
 
 #############
@@ -36,6 +36,7 @@ class Admin(commands.Cog):
 		self.guild = None
 		self.personnal_id = int(PERSONAL_ID)
 		self.client.owner_id = self.personnal_id
+		self.loaded = False
 
 	async def cog_check(self, ctx):
 		"""
@@ -70,15 +71,15 @@ class Admin(commands.Cog):
 		if isinstance(error, ignored):
 			pass
 		elif isinstance(error, commands.BadArgument):
-			await ctx.send(f"Tu as entré de mauvais arguments pour la commande {ctx.command.name}.", delete_after=10)
+			await ctx.send(f"Tu as entré de mauvais arguments pour la commande {ctx.command.name}.", delete_after=5)
 		elif isinstance(error, commands.DisabledCommand):
-			await ctx.send(f"La commande {ctx.command.name} a été désactivée.", delete_after=10)
+			await ctx.send(f"La commande {ctx.command.name} a été désactivée.", delete_after=5)
 		elif isinstance(error, commands.CheckFailure):
-			await ctx.send("Tu n'as pas la permission d'effectuer cette commande.", delete_after=10)
+			await ctx.send("Tu n'as pas la permission d'effectuer cette commande.", delete_after=5)
 		elif isinstance(error, commands.CommandOnCooldown):
-			await ctx.send("Cette commande est en cooldown, attends un peu.", delete_after=10)
+			await ctx.send("Cette commande est en cooldown, attends un peu.", delete_after=5)
 		else:
-			await ctx.send("Une erreur est survenue.", delete_after=10)
+			await ctx.send("Une erreur est survenue.", delete_after=2)
 
 		raise error
 		
@@ -108,7 +109,7 @@ class Admin(commands.Cog):
 	@commands.is_owner()
 	async def purge(self, ctx, n : int = 10):
 		"""
-		Purge message up to 'time' s ago.
+		Purge a defined amount of messages.
 		"""
 		await ctx.message.delete()
 		try:
@@ -126,15 +127,18 @@ class Admin(commands.Cog):
 		Load an extension.
 		"""
 		await ctx.message.delete()
-		try:
-			self.client.load_extension(extension)
-			await ctx.send(f"L'extension {extension} a été chargée.", delete_after=10)
-			await ctx.send("Voici les commandes utilisables:", delete_after=10)
-			await ctx.send_help(extension.capitalize())
-
-		except Exception as e:
-			raise e
-			await ctx.send(f"Impossible de charger l'extension: {extension}\nErreur: {e}", delete_after=10)
+		if not self.loaded:
+			try:
+				self.client.load_extension(extension)
+				await ctx.send(f"L'extension {extension} a été chargée.", delete_after=10)
+				await ctx.send("Voici les commandes utilisables:", delete_after=10)
+				await ctx.send_help(extension.capitalize())
+				self.loaded = True
+			except Exception as e:
+				await ctx.send(f"Impossible de charger l'extension: {extension}\nErreur: {e}", delete_after=10)
+				raise e
+		else:
+			await ctx.send(f"Une extension est déjà chargée.", delete_after=10)
 
 	@commands.command(
 		name="unload",
@@ -146,14 +150,19 @@ class Admin(commands.Cog):
 		Unload an extension.
 		"""
 		await ctx.message.delete()
-		try:
-			if extension != "admin":
-				self.client.unload_extension(extension)
-			else:
-				await ctx.send(f"Impossible d'enlever l'extension: {extension}.", delete_after=10)
-		except Exception as e:
-			await ctx.send(f"Impossible d'enlever l'extension: {extension}\nErreur: {e}", delete_after=10)
-			raise e
+		if self.loaded:
+			try:
+				if extension != "admin":
+					self.client.unload_extension(extension)
+					self.loaded = False
+				else:
+					await ctx.send(f"Impossible d'enlever l'extension: {extension}.", delete_after=10)
+			except Exception as e:
+				await ctx.send(f"Impossible d'enlever l'extension: {extension}\nErreur: {e}", delete_after=10)
+				raise e
+		else:
+			await ctx.send(f"Aucune extension n'est chargée.", delete_after=10)
+
 
 	@commands.command(
 		name="list",

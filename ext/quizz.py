@@ -24,7 +24,7 @@ import json
 ###############
 
 TEST_MODE = True
-GUILD = os.getenv("TEST_GUILD") if TEST_MODE else os.getenv("GUILD")
+GUILD = os.getenv("TEST_GUILD") if TEST_MODE else os.getenv("GAMES_GUILD")
 API_KEY = os.getenv('API_KEY')
 PERSONAL_ID = os.getenv("PERSONAL_ID")
 URL_REQ = "https://www.openquizzdb.org/api.php"
@@ -46,7 +46,7 @@ class Quizz(commands.Cog):
 
 		self.settings = {'timer' : 30, 'nb_choices' : 4, 'difficulty' : 2, 'wiki' : True, 'anec': True}
 		self.formated_url = format_url(nb_choices=4, difficulty=2, wiki=True, anec=True)
-		with open(os.path.join(os.path.dirname(__file__), "images\\urls.json"), 'r') as foo:
+		with open(os.path.join(os.path.dirname(__file__), "resources\\images\\urls.json"), 'r') as foo:
 			self.images_urls = json.load(foo) 
 			foo.close()
 
@@ -93,7 +93,7 @@ class Quizz(commands.Cog):
 		"""
 		Check player's answer.
 		"""
-		return self.answers[reaction] == self.question_data['results'][0]['reponse_correcte']
+		return reaction is not None and self.answers[reaction] == self.question_data['results'][0]['reponse_correcte']
 
 	async def cog_check(self, ctx):
 		"""
@@ -242,9 +242,20 @@ class Quizz(commands.Cog):
 			await ctx.send("Tu es déjà dans la partie.", delete_after=10)
 		else:
 			await ctx.send(f"{ctx.author.mention} a rejoins la partie.", delete_after=10)
-			await ctx.send("Joueurs dans la partie:", delete_after=10)
-			for id in self.players.keys():
-				await ctx.send(f"{self.players[id]['name']}", delete_after=10)
+			
+	@commands.command(
+		name="players",
+		help="Affiche les joueurs dans la partie."
+		)
+	@commands.is_owner()
+	async def get_players(self, ctx):
+		"""
+		Display current players.
+		"""
+		await ctx.message.delete()
+		await ctx.send("Joueurs dans la partie:", delete_after=10)
+		for id in self.players.keys():
+			await ctx.send(f"{self.players[id]['name']}", delete_after=10)
 
 	@commands.command(
 		name="quit",
@@ -299,34 +310,13 @@ class Quizz(commands.Cog):
 		"""
 		await ctx.message.delete()
 
-		if len(self.players.keys()) >= 2:
-			ordered_list = []
-			for id in self.players.keys():
-				if not ordered_list:
-					ordered_list.append(id)
-				else:
-					n = len(ordered_list)
-					i = 0
-					done = False
-					while i < n and not done:
-						score = self.players[id]['score']
-						serie = self.players[id]['serie']
-						if score > self.players[ordered_list[i]]['score']:
-							done = True
-							ordered_list.insert(i, id)
-						elif score == self.players[ordered_list[i]]['score']:
-							if serie > self.players[ordered_list[i]]['serie']:
-								ordered_list.insert(i, id)
-							else:
-								ordered_list.insert(i + 1, id)
-						i += 1
-					if i >= n:
-						ordered_list.append(id)
-			embed = discord.Embed(title="Classement", color=0xf70006)
+		if len(self.players.keys()) >= 1:
+			ordered_dict = dict(sorted(self.players.items(), key=lambda item: item[1]['score']))
+			embed = discord.Embed(title="**Classement**", color=0xf70006)
 			text = ""
 			i = 1
-			for id in ordered_list:
-				player = self.players[id]
+			for id in ordered_dict.keys():
+				player = ordered_dict[id]
 				text += f"{i} - {player['name']} - {player['score']} - {player['serie']}\n"
 				i += 1
 			embed.add_field(name="Place - joueur - score - série", value=text, inline=False)
@@ -346,7 +336,7 @@ class Quizz(commands.Cog):
 		await ctx.message.delete()
 
 		if ctx.author.id in self.players.keys():
-			await ctx.send(f"Tu possèdes actuellement {self.players[ctx.author.id]['score']} points et tu es sur une série de {self.players[ctx.author.id]['serie']} bonnes réponses.", delete_after=15)
+			await ctx.send(f"{ctx.author.name} possède actuellement {self.players[ctx.author.id]['score']} points et est sur une série de {self.players[ctx.author.id]['serie']} bonnes réponses.", delete_after=15)
 		else:
 			await ctx.send("Tu n'es pas dans la partie.", delete_after=10)
 
@@ -356,7 +346,25 @@ class Quizz(commands.Cog):
 		)
 	@commands.is_owner()
 	async def end(self, ctx):
-		pass
+		"""
+		"""
+		await ctx.message.delete()
+
+		if len(self.players.keys()) >= 1:
+			ordered_dict = dict(sorted(self.players.items(), key=lambda item: item[1]['score']))
+			embed = discord.Embed(title="**Classement final**", color=0xf70006)
+			text = ""
+			i = 1
+			for id in ordered_dict.keys():
+				player = ordered_dict[id]
+				text += f"{i} - {player['name']} - {player['score']} - {player['serie']}\n"
+				i += 1
+			embed.add_field(name="Place - joueur - score - série", value=text, inline=False)
+			await ctx.send(embed=embed, delete_after=30)
+			await ctx.send(f"{self.players[ordered_dict.keys()[0]]['name']} remporte la partie!", delete_after=30)
+			self.players = {}
+		else:
+			await ctx.send("Il n'y a pas assez de joueurs.", delete_after=10)
 
 ###############
 ## Functions ##

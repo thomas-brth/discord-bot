@@ -12,11 +12,31 @@ import re
 ## Constants ##
 ###############
 
-YDL_OPT = {'format': 'bestaudio'}
+YDL_OPT = {
+			'format' : 'bestaudio',
+			'postprocessors' : [{
+				'key' : 'FFmpegExtractAudio',
+				'preferredcodec' : 'mp3'
+			}],
+			'logger' : None,
+			'progress_hooks' : []
+		}
 
 #############
 ## Classes ##
 #############
+
+class Logger():
+	"""
+	"""
+	def debug(self, msg):
+		pass
+
+	def warning(self, msg):
+		print(f"WARNING : {msg}", flush=True)
+
+	def error(self, msg):
+		print(f"ERROR : {msg}", flush=True)
 
 class Song():
 	"""
@@ -91,6 +111,14 @@ class Song():
 ## Functions ##
 ###############
 
+def hook(info):
+	"""
+	Hook to be called when a download is finished.
+	"""
+	if info['status'] == 'downloading':
+		# Downloading information
+		print(f"Elapsed: {round(info['elapsed'], 2)}s - Eta:  {info['eta']}s - Speed: {round(info['speed'] / 1e6, 3)}Mo/s", flush=True)
+
 def yt_extract_info(query):
 	"""
 	Return info of searched video.
@@ -100,8 +128,25 @@ def yt_extract_info(query):
 	search_results = re.findall(r'/watch\?v=(.{11})', htm_content.read().decode())
 	res = 'http://www.youtube.com/watch?v='+search_results[0]
 
-	with yt.YoutubeDL(YDL_OPT) as ydl:
+	opt = YDL_OPT
+	opt['logger'] = Logger()
+	opt['progress_hooks'].append(hook)
+
+	with yt.YoutubeDL(opt) as ydl:
 		info = ydl.extract_info(res, download=False)
+
+	return info
+
+def yt_extract_info_from_url(url : str):
+	"""
+	Extract info from a youtube url.
+	"""
+	opt = YDL_OPT
+	opt['logger'] = Logger()
+	opt['progress_hooks'].append(hook)
+
+	with yt.YoutubeDL(opt) as ydl:
+		info = ydl.extract_info(url, download=False)
 
 	return info
 

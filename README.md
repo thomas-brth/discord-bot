@@ -1,7 +1,7 @@
 # discord-bot
-*Simple discord bot with extensions.*
+*Simple Discord bot with extensions.*
 
-This showcase multiple functionalities through modular extensions. It uses Discord Python API [discord.py](https://discordpy.readthedocs.io/en/stable/).
+This bot showcases multiple functionalities through modular extensions, using Discord Python API [discord.py](https://discordpy.readthedocs.io/en/stable/).
 
 ## Setup
 
@@ -11,7 +11,7 @@ Required Python librairies can be found in `requirement.txt` file.
 >Some extensions might need more librairies.
 
 ### Environment & Discord bots
-The very first steps of deploying a discord bot on your server is to declare one on the discord website. Check [this tutorial](https://discordpy.readthedocs.io/en/stable/discord.html). Once you're done, you'll be able to retrieve its associated token.
+The very first steps of deploying a Discord bot on your server is to declare one on the Discord website. Check [this tutorial](https://discordpy.readthedocs.io/en/stable/discord.html). Once you're done, you'll be able to retrieve its associated token.
 
 This bot uses environment variables stored in `.env` files. These can be found within the source code and extensions folders.
 ```
@@ -38,14 +38,14 @@ As of today, the bot has 5 extensions, including the ***Admin*** extension. When
 List of available extensions :
 - **Admin** : Gather all the administrator commands and handle errors. This exention can't be loaded nor unloaded.
 - **Blindtest** : *To do*
-- **Music** : Music extension for discord bots. Play music in a voice chanel directly from Youtube. **FFmpeg needed**
+- **Music** : Music extension for Discord bots. Play music in a voice chanel directly from Youtube. **FFmpeg needed**
 - **Poker** : *To do*
 - **Quizz** : *To do*
 
 Each extension is a python file with an entry point called `setup`. It adds the cog to the client - here the bot which loads the extension. You can add custom extensions in the `ext\` folder, with the same code structure as shown below :
 ```python
-import discord
-from discord.ext import commands
+import Discord
+from Discord.ext import commands
 
 class SomeExtension(commands.Cog):
 	

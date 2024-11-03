@@ -52,6 +52,13 @@ class Music(commands.Cog):
 		"""
 		return True
 
+	async def cog_load(self):
+		"""
+		Called when the cog is loaded.
+		Enable asynchronous tasks to be performed outside the __init__() function.
+		"""
+		pass
+
 	############
 	## Events ##
 	############
@@ -285,8 +292,8 @@ class Music(commands.Cog):
 ## Functions ##
 ###############
 
-def setup(client):
+async def setup(client):
 	"""
 	Setup the Cog.
 	"""
-	client.add_cog(Music(client))
+	await client.add_cog(Music(client))

@@ -179,7 +179,7 @@ class Quizz(commands.Cog):
 		await ctx.message.delete()
 		if timer > 5:
 			self.settings['timer'] = timer
-			await ctx.send(f"Temps de réponse fixé à {value}s.", delete_after=10)
+			await ctx.send(f"Temps de réponse fixé à {timer}s.", delete_after=10)
 		else:
 			await ctx.send("Le temps de réponse doit être supérieur à 5s.", delete_after=10)
 
@@ -402,9 +402,12 @@ def check_question(data : dict):
 	"""
 	return data['response_code'] == 0
 
+####################
+## Setup function ##
+####################
 
-def setup(client):
+async def setup(client):
 	"""
 	Setup the Cog.
 	"""
-	client.add_cog(Quizz(client))
+	await client.add_cog(Quizz(client))

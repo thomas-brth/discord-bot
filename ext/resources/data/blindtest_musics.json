@@ -9,6 +9,27 @@
 			"hard" : false
 		},
 		{
+			"title" : "Fireflies",
+			"artists" : ["Owl City"],
+			"url" : "https://www.youtube.com/watch?v=psuRGfAaju4&ab_channel=OwlCityVEVO",
+			"start_time" : 75,
+			"hard" : false
+		},
+		{
+			"title" : "Blinding Lights",
+			"artists" : ["The Weeknd"],
+			"url" : "https://www.youtube.com/watch?v=fHI8X4OXluQ&ab_channel=TheWeekndVEVO",
+			"start_time" : 11,
+			"hard" : false
+		},
+		{
+			"title" : "7 Years",
+			"artists" : ["Lukas Graham"],
+			"url" : "https://www.youtube.com/watch?v=LHCob76kigA&ab_channel=LukasGraham",
+			"start_time" : 4,
+			"hard" : false
+		},
+		{
 			"title" : "The Lazy Song",
 			"artists" : ["Bruno Mars"],
 			"url" : "https://www.youtube.com/watch?v=fLexgOxsZu0&ab_channel=BrunoMars",
@@ -440,7 +461,7 @@
 		{
 			"title" : "Lone Digger",
 			"artists" : ["Caravan Palace"],
-			"url" : "https://www.youtube.com/watch?v=gAjR4_CbPpQ",
+			"url" : "https://www.youtube.com/watch?v=UbQgXeY_zi4&ab_channel=CaravanPalace",
 			"start_time" : 3,
 			"hard" : true
 		}
@@ -526,6 +547,69 @@
 			"hard" : false
 		},
 		{
+			"title" : "God's Plan",
+			"artists" : ["Drake"],
+			"url" : "https://www.youtube.com/watch?v=xpVfcZ0ZcFM&ab_channel=DrakeVEVO",
+			"start_time" : 48,
+			"hard" : false
+		},
+		{
+			"title" : "Réseaux",
+			"artists" : ["Niska"],
+			"url" : "https://www.youtube.com/watch?v=tul6zYBp9tA&ab_channel=NiskaOfficiel",
+			"start_time" : 10,
+			"hard" : false
+		},
+		{
+			"title" : "Ne reviens pas",
+			"artists" : ["Gradur", "Heuss L'enfoiré"],
+			"url" : "https://www.youtube.com/watch?v=ZVgdQHA_IH4",
+			"start_time" : 57,
+			"hard" : false
+		},
+		{
+			"title" : "The Memo",
+			"artists" : ["Chill Bump"],
+			"url" : "https://www.youtube.com/watch?v=kWXAYDQ_K7k&ab_channel=ChillBump",
+			"start_time" : 0,
+			"hard" : true
+		},
+		{
+			"title" : "Vald",
+			"artists" : ["Désaccordé"],
+			"url" : "https://www.youtube.com/watch?v=kutk2XHEZNU&ab_channel=VALDVEVO",
+			"start_time" : 10,
+			"hard" : false
+		},
+		{
+			"title" : "Au DD",
+			"artists" : ["PNL"],
+			"url" : "https://www.youtube.com/watch?v=BtyHYIpykN0&ab_channel=PNL",
+			"start_time" : 55,
+			"hard" : false
+		},
+		{
+			"title" : "Regarde comme il fait beau",
+			"artists" : ["Casseurs Flowters"],
+			"url" : "https://www.youtube.com/watch?v=4qaTeHEo-28&ab_channel=CasseursFlowtersVEVO",
+			"start_time" : 79,
+			"hard" : false
+		},
+		{
+			"title" : "Fais les backs",
+			"artists" : ["Casseurs Flowters"],
+			"url" : "https://www.youtube.com/watch?v=o0WAnXfaGiA&ab_channel=CasseursFlowtersVEVO",
+			"start_time" : 0,
+			"hard" : false
+		},
+		{
+			"title" : "Matuidi Charo",
+			"artists" : ["Niska"],
+			"url" : "https://www.youtube.com/watch?v=p-Ylj6ZUmtE&ab_channel=NiskaOfficiel",
+			"start_time" : 23,
+			"hard" : false
+		},
+		{
 			"title" : "JCVD",
 			"artists" : ["JuL"],
 			"url" : "https://www.youtube.com/watch?v=ByHxaDIyRTk",
@@ -555,14 +639,14 @@
 		},
 		{
 			"title" : "Avant qu'elle parte",
-			"artists" : ["Sexion d'Assault"],
+			"artists" : ["Sexion d'Assaut"],
 			"url" : "https://www.youtube.com/watch?v=lN2ozTZNJC0&ab_channel=sexiondassautVevo",
 			"start_time" : 0,
 			"hard" : false
 		},
 		{
 			"title" : "Wati by Night",
-			"artists" : ["Sexion d'Assault"],
+			"artists" : ["Sexion d'Assaut"],
 			"url" : "https://www.youtube.com/watch?v=YvsZf70Cqzk",
 			"start_time" : 69,
 			"hard" : false

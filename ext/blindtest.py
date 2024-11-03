@@ -25,8 +25,8 @@ from utils import music_tools, blindtest_tools
 ## Constants ##
 ###############
 
-TEST_MODE = True
-GUILD = os.getenv("TEST_GUILD") if TEST_MODE else os.getenv("GAMES_GUILD")
+TEST_MODE = False
+GUILD = os.getenv("TEST_GUILD") if TEST_MODE else os.getenv("GUILD")
 PERSONAL_ID = os.getenv("PERSONAL_ID")
 
 #############
@@ -104,8 +104,8 @@ class Blindtest(commands.Cog):
 	@commands.Cog.listener()
 	async def on_message(self, message):
 		if message.channel == self.default_channel and self.accepting_answers and message.author.id != self.client.user.id and message.author.id in self.players.keys():
-			answer_type = blindtest_tools.process(message=message, title=self.current_music_meta['title'], artists=self.current_music_meta['artists'])
-			if answer_type == blindtest_tools.RIGHT_ANSWER:
+			answer_type = blindtest_tools.process_enhanced(message=message, title=self.current_music_meta['title'], artists=self.current_music_meta['artists'])
+			if answer_type == blindtest_tools.RIGHT_ANSWER and self.accepting_title_guess and self.accepting_artists_guess:
 				self.accepting_answers = False
 				self.players[message.author.id]['score'] += 3
 				if self.current_music_meta['hard']:
@@ -161,7 +161,7 @@ class Blindtest(commands.Cog):
 			self.voice_client = await self.voice_channel.connect()
 			if mode == "all":
 				for cat in self.data['categories']:
-					self.registered_musics[category] = self.data[cat]
+					self.registered_musics[cat] = self.data[cat]
 				await self.display_categories(ctx)
 			elif mode == "facile":
 				self.registered_musics['facile'] = self.data['facile']
@@ -348,8 +348,8 @@ class Blindtest(commands.Cog):
 ## Functions ##
 ###############
 
-def setup(client):
+async def setup(client):
 	"""
 	Setup the Cog
 	"""
-	client.add_cog(Blindtest(client))
+	await client.add_cog(Blindtest(client))

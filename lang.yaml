@@ -1,0 +1,33 @@
+encoding: "utf-8"
+default: fr
+fr:
+  commands:
+    admin:
+      quit:
+        help: "Déconnecte le bot du serveur."
+        brief: "Déconnecte le bot du serveur."
+      purge:
+        help: "Supprime le nombre indiqué de messages, en commençant par les plus récents dans le canal où cette commande est invoquée."
+        brief: "Supprime les derniers messages."
+      load:
+        help: "Ajoute l'extension spécifiée au bot. Le nom de l'extension doit être écrit en minuscules et correspondre exactement au nom de l'extension souhaitée."
+        brief: "Ajoute une extension au bot."
+      unload:
+        help: "Retire l'extension spécifiée du bot. Le nom de l'extension doit être écrit en minuscules et correspondre exactement au nom de l'extension souhaitée."
+        brief: "Retire une extension au bot."
+      reload:
+        help: "Recharge toutes les extensions.\nPermet de régler certains problèmes rencontrés lors de l'utilisation du bot."
+        brief: "Recharge toutes les extensions."
+      ext:
+        help: "Liste toutes les extensions qui sont actuellement utilisées par le bot."
+        brief: "Liste toutes les extensions chargées."
+      sync:
+        help: "Synchronise toutes les commandes slash et menus contextuels du bot."
+        brief: "Synchronise les commandes du bot."
+  events:
+    ready: "Salut tout le monde !"
+    error: "Une erreur est survenue."
+    quit_error: "Impossible de me déconnecter. Je dois d'abord quitter les salons vocaux."
+en:
+  commands:
+  events:

@@ -1,0 +1,31 @@
+version: 1
+filters:
+  skip_levels:
+    (): utils.logging_tools.LevelFilter
+    level: WARNING
+    mode: above
+formatters:
+  complete: 
+    format: '[%(asctime)s] %(levelname)8s %(name)10s - line: %(lineno)s - file: %(filename)s - %(message)s'
+    datefmt: '%Y-%M-%d %H:%M:%S'
+  simple: 
+    format: '[%(asctime)s] %(levelname)8s %(name)10s - %(message)s '
+    datefmt: '%Y-%M-%d %H:%M:%S'
+handlers:
+  stdout:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stdout
+    filters:
+      - skip_levels
+  stderr:
+    class: logging.StreamHandler
+    level: WARNING
+    formatter: complete
+    stream: ext://sys.stderr
+root:
+  level: DEBUG
+  handlers :
+    - stdout
+    - stderr

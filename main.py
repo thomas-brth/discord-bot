@@ -7,6 +7,7 @@
 ## Discord imports ##
 import discord
 print(f"Currently using discord python API {discord.__version__}.", flush=True)
+from discord import app_commands
 from discord.ext import commands
 
 ## Other imports ##
@@ -17,53 +18,72 @@ import sys
 sys.path.append("ext")
 sys.path.append("ext\\utils")
 sys.path.append("ext\\resources")
+import asyncio
 
 ###############
 ## Constants ##
 ###############
 
-TEST_MODE = True
-TOKEN = os.getenv("TEST_BOT") if TEST_MODE else os.getenv("BOT")
+###########
+## Class ##
+###########
+
+class MainBot(commands.Bot):
+	"""
+	Override commands
+	Bot to include a test mode and encapsulate async functions.
+	"""
+	def __init__(self, test_mode : bool, **kwargs):
+		super(MainBot, self).__init__(**kwargs)
+		self.test_mode = test_mode
+		self.token = os.getenv("TEST_BOT") if self.test_mode else os.getenv("BOT")
+		
+		# Context Menu function model
+		@self.tree.context_menu(name="date")
+		async def show_joined_date(interaction : discord.Interaction, member : discord.Member):
+			await interaction.response.send_message(f"Arrivé sur le serveur le : {member.joined_at}", ephemeral=True)
+
+		# Other context menus ?
+
+	async def execute(self):
+		"""
+		Start the bot.
+		Call both bot.connect() and bot.login() functions, the latter calling the bot.setup_hook() function.
+		"""
+		await self.start(token=self.token, reconnect=True)
+
+	async def setup_hook(self):
+		"""
+		A coroutine to be called to setup the bot, by default this is blank.
+		This is only called once, in login(), and will be called before any events are dispatched, making it a better solution than doing such setup in the on_ready() event.
+		"""
+		try:
+			await self.load_extension("admin") # load the admin extension
+		except Exception as e:
+			raise e
+
+	## ERROR HANDLER ? ##
 
 ###############
 ## Functions ##
 ###############
 
-def load(bot : commands.Bot, extension_name : str):
+async def main():
 	"""
-	load a given extension.
-	"""
-	try:
-		bot.load_extension(extension_name)
-	except Exception as e:
-		raise e
-		print(f"{extension_name} could not be loaded.")
-
-def unload(bot : commands.Bot, extension_name : str):
-	"""
-	Unload a given extension.
-	"""
-	try:
-		bot.unload_extension(extension_name)
-	except Exception as e:
-		raise e
-		print(f"{extension_name} could not be unloaded.")
-
-def main():
-	"""
-	Main function. Bot initialisation.
+	Main function.
+	Async Bot initialisation.
 	"""
 	desc = """A simple bot, by Atomix."""
-	extensions = ["ext.admin"]
 	
-	bot = commands.Bot(command_prefix=['!', '.'], description=desc)
+	intents = discord.Intents.all()
+	bot = MainBot(test_mode=True, command_prefix=['!', '.'], description=desc, intents=intents)
 
-	# Load main extensions
-	for extension in extensions:
-		load(bot, extension)
-
-	# Run the client
-	bot.run(TOKEN)
+	@bot.before_invoke
+	async def delete_message(ctx : commands.Context):
+		await ctx.message.delete()
+	
+	# Start the client
+	await bot.execute()
 
 if __name__ == '__main__':
-	main()
+	asyncio.run(main())

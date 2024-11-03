@@ -15,11 +15,11 @@ load_dotenv()
 import os
 import asyncio
 import time
+import yaml
 
 ## Logging imports ##
 import logging
 from logging.config import dictConfig
-import yaml
 
 ###############
 ## Constants ##

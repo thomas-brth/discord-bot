@@ -49,7 +49,7 @@ class Admin(commands.Cog):
 
 	async def cog_check(self, ctx : commands.Context):
 		"""
-		Check to be executed before any command.
+		Check to be executed and called before any command.
 		"""
 		return True
 
@@ -57,8 +57,10 @@ class Admin(commands.Cog):
 		"""
 		Called when the cog is loaded.
 		Enable asynchronous tasks to be performed outside the __init__() function.
+
+		Here : setup logger config.
 		"""
-		# Setup logger
+		# Setup logger using predefined logging configuration inside a yaml file.
 		with open(os.path.join(os.path.dirname(__file__), 'utils/log_config.yaml'), 'r') as stream:
 			log_config = yaml.load(stream, Loader=yaml.FullLoader)
 
@@ -72,6 +74,9 @@ class Admin(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_ready(self):
+		"""
+		Event listener called when the client is ready.
+		"""
 		self.logger.info("Client ready.")
 		self.guild = discord.utils.get(self.client.guilds, id=int(self.guild_id))
 		self.client.get_command('help').cog = self # Set 'help' command as an Admin command
@@ -79,12 +84,13 @@ class Admin(commands.Cog):
 	@commands.Cog.listener()
 	async def on_command_error(self, ctx : commands.Context, error : BaseException):
 		"""
-		An error handler that is called when an error is raised inside a command either through user input error, check failure, or an error in the code.
+		An error handler called when an error is raised inside a command, either through user input error, check failure, or an error in the code.
 		"""
 		self.logger.error(error)
 
 		try:
 			# Check which error is triggered for custom responses
+			## TO DO : add more cases ##
 			if issubclass(type(error), commands.UserInputError):
 				await ctx.send(f"Tu as mal utilisé la commande {ctx.command.name}.", delete_after=5)
 			elif issubclass(type(error), commands.DisabledCommand):
@@ -113,7 +119,7 @@ class Admin(commands.Cog):
 	@commands.is_owner()
 	async def quit(self, ctx : commands.Context):
 		"""
-		Disconnect the cliet from the server.
+		Disconnect the client from the server.
 		"""
 		if self.client.voice_clients:
 			await ctx.send("Impossible de me déconnecter. Je dois d'abord quitter les salons vocaux.", delete_after=10)

@@ -6,7 +6,6 @@
 
 ## Discord imports ##
 import discord
-print(f"Currently using discord python API {discord.__version__}.", flush=True)
 from discord import app_commands
 from discord.ext import commands
 
@@ -55,7 +54,7 @@ class MainBot(commands.Bot):
 	async def setup_hook(self):
 		"""
 		A coroutine to be called to setup the bot, by default this is blank.
-		This is only called once, in login(), and will be called before any events are dispatched, making it a better solution than doing such setup in the on_ready() event.
+		This is only called once, inside login() call, and will be called before any events are dispatched, making it a better solution than doing such setup in the on_ready() event.
 		"""
 		try:
 			await self.load_extension("admin") # load the admin extension
@@ -78,6 +77,7 @@ async def main():
 	intents = discord.Intents.all()
 	bot = MainBot(test_mode=True, command_prefix=['!', '.'], description=desc, intents=intents)
 
+	# Delete the command before its execution.
 	@bot.before_invoke
 	async def delete_message(ctx : commands.Context):
 		await ctx.message.delete()
@@ -86,4 +86,5 @@ async def main():
 	await bot.execute()
 
 if __name__ == '__main__':
+	print(f"Currently using discord python API {discord.__version__}.", flush=True)
 	asyncio.run(main())
